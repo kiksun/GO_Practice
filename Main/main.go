@@ -1,60 +1,17 @@
 package main
-
 import (
-        "fmt"
-        "strconv"
-        "github.com/gin-gonic/gin"
-        "github.com/jinzhu/gorm"
-        _ "github.com/mattn/go-sqlite3"
-        _ "net/http"
+  "database/sql"
+  _"github.com/go-sql-driver/mysql"
 )
-
-type Person struct {
-        gorm.Model
-        Name string
-        Age  int
-}
-
-func db_init() {
-        db, err := gorm.Open("sqlite3", "test.sqlite3")
-        if err != nil {
-                panic("failed to connect database\n")
-        }
-
-        db.AutoMigrate(&Person{})
-}
-func create(name string, age int) {
-        db, err := gorm.Open("sqlite3", "test.sqlite3")
-        if err != nil {
-                panic("failed to connect database\n")
-        }
-        db.Create(&Person{Name: name, Age: age})
-}
-func get_all() []Person {
-        db, err := gorm.Open("sqlite3", "test.sqlite3")
-        if err != nil {
-                panic("failed to connect database\n")
-        }
-        var people []Person
-        db.Find(&people)
-        return people
-
-}
 func main() {
-        r := gin.Default()
-        r.LoadHTMLGlob("templates/*")
-        db_init()
-        r.GET("/", func(c *gin.Context) {
-                people := get_all()
-                c.HTML(200, "index.tmpl", gin.H{
-                        "people": people,
-                })
-        })
-        r.POST("/new", func(c *gin.Context) {
-                name := c.PostForm("name")
-                age, _ := strconv.Atoi(c.PostForm("age"))
-                create(name, age)
-                c.Redirect(302, "/")
-        })
-        r.Run()
+  db, err := sql.Open("mysql", "root:FdVSTh9L@tcp(127.0.0.1:3306)/mydb")
+  if err != nil {
+    panic(err.Error())
+  }
+  defer db.Close()
+  insert, err := db.Query("INSERT INTO posts(title) VALUES('AAA')")
+  if err != nil {
+    panic(err.Error())
+  }
+  defer insert.Close()
 }
