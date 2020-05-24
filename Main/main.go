@@ -9,7 +9,7 @@ func main() {
     panic(err.Error())
   }
   defer db.Close()
-  insert, err := db.Query("INSERT INTO posts(title) VALUES('AAA')")
+  insert, err := db.Query("INSERT INTO posts(title,id, content) VALUES('AAA',19,'aaa')")
   if err != nil {
     panic(err.Error())
   }
